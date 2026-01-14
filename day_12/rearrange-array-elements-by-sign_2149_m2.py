@@ -1,19 +1,23 @@
-# Brute Force Approach
+from typing import List
+class Solution:
+    def rearrangeArray(self, nums: List[int]) -> List[int]:
 
-nums = [3,1,-2,-5,2,-4]
-n = len(nums)
-
-pos=[]
-neg=[]
-
-for num in nums :
-    if num > 0:
-        pos.append(num)
-    else:
-        neg.append(num)
+        n = len(nums)
+        result = [0] * n
+        posIndex = 0
+        negIndex = 1
         
-for i in range(0,len(pos)):
-    nums[i*2] = pos[i]
-    nums[(i*2)+1] = neg[i]
+        for num in nums:
+            if num > 0:
+                result[posIndex] = num
+                posIndex += 2
+            else:
+                result[negIndex] = num
+                negIndex += 2
+        
+        return result
     
-print(nums)
+# Example usage:
+solution = Solution()
+print(solution.rearrangeArray([3,1,-2,-5,2,-4]))
+# Output: [3,-2,1,-5,2,-4]
