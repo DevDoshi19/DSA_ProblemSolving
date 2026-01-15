@@ -1,5 +1,5 @@
 """
-Brute Force Approach - Sorting Method
+Better Force Approach - Sorting Method
 
 Intuition:
 - Sort the array so consecutive numbers become adjacent
