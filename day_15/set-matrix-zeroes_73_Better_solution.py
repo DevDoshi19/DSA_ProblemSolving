@@ -1,124 +1,122 @@
 """
-Brute Force Approach - Marking with Infinity
-
-Problem: Set entire row and column to 0 if any element in that position is 0
-Challenge: Can't set zeros immediately as it affects subsequent checks
+Better Approach - Using Extra Space (Row & Column Tracking)
 
 Intuition:
-- We can't set zeros while scanning because it creates cascading zeros
-- Solution: Mark positions with a special value (infinity) first
-- Then convert all infinity markers to zeros in a second pass
-- Use infinity because it won't naturally appear in the input (integers only)
+- Instead of marking in the matrix itself, use separate arrays to track
+- Use two arrays: one for rows, one for columns
+- Mark which rows and columns contain zeros
+- Then set zeros in a second pass based on these markers
 
 Algorithm:
-1. First Pass - Find zeros and mark their rows/columns:
-   - Iterate through entire matrix
-   - When we find a 0 at position (i, j):
-     * Mark entire row i with infinity (except existing zeros)
-     * Mark entire column j with infinity (except existing zeros)
-   
-2. Second Pass - Convert markers to zeros:
-   - Iterate through entire matrix again
-   - Replace all infinity values with 0
+1. Create two tracking arrays:
+   - rowtrack[i] = -1 means row i should be all zeros
+   - coltrack[j] = -1 means column j should be all zeros
 
-Helper Function: mark_inf(matrix, row, col)
-- Takes the position of a zero element
-- Marks entire row and column with float("inf")
-- Skips cells that are already 0 (to preserve original zeros)
+2. First Pass - Identify zeros:
+   - Scan entire matrix
+   - When we find matrix[i][j] == 0:
+     * Mark rowtrack[i] = -1
+     * Mark coltrack[j] = -1
+
+3. Second Pass - Set zeros:
+   - Scan entire matrix again
+   - If rowtrack[i] == -1 OR coltrack[j] == -1:
+     * Set matrix[i][j] = 0
 
 Example Walkthrough:
 Input: [[1,1,1],
         [1,0,1],
         [1,1,1]]
 
-Step 1: Find zero at (1,1)
-After marking: [[1, inf, 1],
-                [inf, 0, inf],
-                [1, inf, 1]]
+Step 1: Initialize tracking arrays
+rowtrack = [0, 0, 0]
+coltrack = [0, 0, 0]
 
-Step 2: Convert inf to 0
+Step 2: Find zero at (1,1)
+rowtrack = [0, -1, 0]  ← row 1 marked
+coltrack = [0, -1, 0]  ← col 1 marked
+
+Step 3: Set zeros based on markers
+- (0,1): coltrack[1] == -1 → set to 0
+- (1,0): rowtrack[1] == -1 → set to 0
+- (1,1): already 0
+- (1,2): rowtrack[1] == -1 → set to 0
+- (2,1): coltrack[1] == -1 → set to 0
+
 Output: [[1, 0, 1],
          [0, 0, 0],
          [1, 0, 1]]
 
-Time Complexity: O(m * n * (m + n))
-- Outer loops: O(m * n) to scan entire matrix
-- For each zero found, mark_inf takes: O(m + n)
-  * O(m) to mark column
-  * O(n) to mark row
-- Second pass: O(m * n) to convert inf to 0
-- Worst case: if all elements are 0, we call mark_inf m*n times
-- Total: O(m * n * (m + n))
+Time Complexity: O(m * n)
+- First pass: O(m * n) - scan entire matrix once
+- Second pass: O(m * n) - scan entire matrix once
+- Total: O(m * n) + O(m * n) = O(m * n)
+- Much better than previous O(m * n * (m + n)) approach!
 
-Space Complexity: O(1)
-- Only using constant extra space for variables (i, j, row, col, r, c)
-- Modifying matrix in-place
-- Not using any additional data structures
-- Note: We're using the matrix itself to store markers
+Space Complexity: O(m + n)
+- rowtrack array: O(m) space for m rows
+- coltrack array: O(n) space for n columns
+- Total extra space: O(m + n)
+- Trade-off: Using extra space for better time complexity
+
+Comparison with Previous Approach:
+Previous (Infinity Marking):
+- Time: O(m * n * (m + n)) ✗ Slower
+- Space: O(1) ✓ No extra space
+
+Current (Row/Col Tracking):
+- Time: O(m * n) ✓ Optimal time
+- Space: O(m + n) ✗ Extra space used
 
 Pros:
-✓ In-place modification (no extra space for data structures)
-✓ Easy to understand the logic
-✓ Works correctly for all test cases
+✓ Optimal time complexity O(m * n)
+✓ Clean and easy to understand
+✓ Only two passes through matrix
+✓ No risk of conflicts with existing values
+✓ Standard interview solution
 
 Cons:
-✗ Not optimal time complexity O(m*n*(m+n)) vs optimal O(m*n)
-✗ Requires multiple passes through matrix
-✗ Won't work if matrix contains infinity values (but LeetCode doesn't test this)
+✗ Uses extra O(m + n) space
+✗ Not truly "in-place" due to extra arrays
 
-Better Approaches:
-1. Use extra space O(m+n): Store zero positions in sets - Time: O(m*n)
-2. Use first row/column as markers: Constant space - Time: O(m*n)
+Next Level Optimization:
+- Can achieve O(1) space by using first row/column as markers
+- More complex but truly constant space
 
 Where:
 m = number of rows
 n = number of columns
 """
+
 from typing import List
+
 class Solution:
     def setZeroes(self, matrix: List[List[int]]) -> None:
         """
         Do not return anything, modify matrix in-place instead.
         """
-
-        def mark_inf(matrix, row, col):
-            """
-            Helper function to mark entire row and column with infinity
-            
-            Args:
-                matrix: 2D list to modify
-                row: row index where zero was found
-                col: column index where zero was found
-            """
-            r = len(matrix)      # Total rows
-            c = len(matrix[0])   # Total columns
-            
-            # Mark entire column with infinity
-            for i in range(r):
-                if matrix[i][col] != 0:  # Don't overwrite existing zeros
-                    matrix[i][col] = float("inf")
-            
-            # Mark entire row with infinity
-            for j in range(c):
-                if matrix[row][j] != 0:  # Don't overwrite existing zeros
-                    matrix[row][j] = float("inf")
-
-        rows = len(matrix)
-        cols = len(matrix[0])
+        row = len(matrix)
+        col = len(matrix[0])
         
-        # First pass: Find zeros and mark their rows/columns with infinity
-        for i in range(rows):
-            for j in range(cols):
+        # Create tracking arrays to mark which rows/cols need zeros
+        rowtrack = [0 for _ in range(row)]  # Track rows with zeros
+        coltrack = [0 for _ in range(col)]  # Track columns with zeros
+        
+        # First pass: Identify which rows and columns contain zeros
+        for i in range(row):
+            for j in range(col):
                 if matrix[i][j] == 0:
-                    mark_inf(matrix, i, j)
+                    rowtrack[i] = -1  # Mark this row
+                    coltrack[j] = -1  # Mark this column
         
-        # Second pass: Convert all infinity markers to zeros
-        for i in range(rows):
-            for j in range(cols):
-                if matrix[i][j] == float("inf"):
+        # Second pass: Set zeros based on markers
+        for i in range(row):
+            for j in range(col):
+                if rowtrack[i] == -1 or coltrack[j] == -1:
                     matrix[i][j] = 0
+
 # Example
 solution = Solution()
 matrix = [[1,1,1],[1,0,1],[1,1,1]]
-solution.setZeroes(matrix=matrix)
+solution.setZeroes(matrix)
 print(matrix)  # Output: [[1,0,1],[0,0,0],[1,0,1]]
