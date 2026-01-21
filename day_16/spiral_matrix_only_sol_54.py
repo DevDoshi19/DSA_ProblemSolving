@@ -109,6 +109,7 @@ Interview Tips:
 - Practice with different matrix sizes
 """
 
+from typing import List
 class Solution:
     def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
         # Handle edge case: empty matrix
