@@ -80,10 +80,10 @@ Down   ↓   | right--          | Move left after traversing right column
 Left   ←   | bottom--         | Move up after traversing bottom row
 Up     ↑   | left++           | Move right after traversing left column
 
-Time Complexity: O(m × n)
+Time Complexity: O(m * n)
 - Visit each element exactly once
 - m = number of rows, n = number of columns
-- Total elements = m × n
+- Total elements = m * n
 
 Space Complexity: O(1)
 - Only using result array (which is required for output)
