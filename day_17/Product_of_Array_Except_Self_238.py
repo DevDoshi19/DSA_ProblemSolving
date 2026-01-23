@@ -1,5 +1,3 @@
-from typing import List
-
 class Solution:
     def productExceptSelf(self, nums: List[int]) -> List[int]:
         n = len(nums)
@@ -18,8 +16,39 @@ class Solution:
             suffix *= nums[i]
         
         return result
-    
-# Example usage:
-solution = Solution()
-nums = [1, 2, 3, 4]
-print(solution.productExceptSelf(nums))  # Output: [24, 12, 8, 6]
+"""
+
+**Time:** O(n) - Optimal!  
+**Space:** O(1) - Only using result array (output doesn't count)
+
+---
+
+## 📊 Visual Example:
+
+**Input:** `nums = [1, 2, 3, 4]`
+
+### **Step 1: Prefix Products (Left to Right)**
+```
+Index:     0    1    2    3
+nums:      1    2    3    4
+prefix:    1    1    2    6    (product of all elements BEFORE i)
+result:   [1,   1,   2,   6]
+```
+
+| i | prefix (before i) | result[i] | New prefix |
+|---|-------------------|-----------|------------|
+| 0 | 1 | 1 | 1×1 = 1 |
+| 1 | 1 | 1 | 1×2 = 2 |
+| 2 | 2 | 2 | 2×3 = 6 |
+| 3 | 6 | 6 | 6×4 = 24 |
+
+### **Step 2: Suffix Products (Right to Left)**
+```
+Index:     0    1    2    3
+nums:      1    2    3    4
+suffix:   24   12    4    1    (product of all elements AFTER i)
+result:   [1,   1,   2,   6]
+         ×24  ×12   ×4   ×1
+        ─────────────────────
+result:  [24,  12,   8,   6]
+"""
