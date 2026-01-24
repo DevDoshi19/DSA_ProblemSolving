@@ -13,3 +13,10 @@ class Solution:
             prefix_map[prefix_sum] = prefix_map.get(prefix_sum, 0) + 1
         
         return count
+    
+# Example usage:
+if __name__ == "__main__":
+    solution = Solution()
+    nums = [1, 1, 1]
+    k = 2
+    print(solution.subarraySum(nums, k))  # Output: 2
