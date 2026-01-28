@@ -1,3 +1,6 @@
+# LeetCode Problem 69: Sqrt(x) - Easy
+# Given a non-negative integer x, compute and return the square root of x.
+
 class Solution:
     def mySqrt(self, x: int) -> int:
         sq = int(x**0.5)
