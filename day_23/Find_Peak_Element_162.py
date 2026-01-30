@@ -1,3 +1,4 @@
+from typing import List
 class Solution:
     def findPeakElement(self, nums: List[int]) -> int:
         left, right = 0, len(nums) - 1
@@ -15,4 +16,8 @@ class Solution:
         
         return left
     
-    
+# Example usage:
+sol = Solution()
+print(sol.findPeakElement([1,2,3,1]))  # Output: 2
+print(sol.findPeakElement([1,2,1,3,5,6,4]))  # Output: 5
+# LeetCode Problem 162: Find Peak Element - Medium
